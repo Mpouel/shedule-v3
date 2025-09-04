@@ -3,12 +3,8 @@ let db;
 
 async function fetchDB() {
   // Fetch URL and anon key from static files (they must be served, not local-only)
-  const supabaseUrl = (
-    await fetch('/storage/api.url').then((res) => res.text())
-  ).trim();
-  const supabaseKey = (
-    await fetch('/storage/api.key').then((res) => res.text())
-  ).trim();
+  const supabaseUrl = "https://vjruyeayykeveptvdsot.supabase.co"
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqcnV5ZWF5eWtldmVwdHZkc290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4NDY3NTQsImV4cCI6MjA3MjQyMjc1NH0.hzFd4sNWD7zfCrsQhW0_aP-BVycXLA9w8z2nBL83XMM";
 
   // Create client
   db = window.supabase.createClient(supabaseUrl, supabaseKey);
