@@ -1,26 +1,46 @@
 let users = [];
-let db;
+let user = "caleb"
+let db, ics, icsd, userd, currentDay, todayEvent
 
 async function fetchDB() {
   // Fetch URL and anon key from static files (they must be served, not local-only)
-  const supabaseUrl = "https://vjruyeayykeveptvdsot.supabase.co"
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqcnV5ZWF5eWtldmVwdHZkc290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4NDY3NTQsImV4cCI6MjA3MjQyMjc1NH0.hzFd4sNWD7zfCrsQhW0_aP-BVycXLA9w8z2nBL83XMM";
+  supabaseKey = await fetch("storage/api.key.key").then(res => res.text());
+  supabaseUrl = await fetch("storage/api.url.key").then(res => res.text());
   // Create client
   db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   // Replace "users" with your actual table name
   const { data, error } = await db.from('auth').select('*');
   if (error) {
-    console.log('Supabase error:', error.message);
+    return;
   }
 
   users = data || [];
 }
 
+function setVars() {
+  userd = users.find(usr => usr.name === user);
+  ics = userd.ics
+}
+
+async function fetchDay() {
+  await fetch(ics)
+      .then(response => response.text())
+      .then(data => {icsd = data;})
+      .catch(error => console.error('Error fetching ICS file:', error));
+  const events = icsd.toJson();
+  const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  const td = event => event.DTSTART?.startsWith(today);
+  todayEvent = events.find(td);
+  currentDay = todayEvent.SUMMARY.slice(1, 2);
+  localStorage.currentSchoolDay = currentDay;
+}
+
 async function run() {
   await fetchDB();
-  users = JSON.stringify(users)
-  document.getElementById("output").innerHTML = users
+  setVars();
+  await fetchDay();
+  $i("output").innerHTML = "day" + currentDay
 }
 
 run();
