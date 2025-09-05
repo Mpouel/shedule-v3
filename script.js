@@ -40,7 +40,7 @@ async function run() {
   await fetchDB();
   setVars();
   await fetchDay();
-  $i("output").innerHTML = "day" + currentDay
+  document.getElementById("output").innerHTML = ("day" + currentDay) || "poop"
 }
 
 run();
